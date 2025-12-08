@@ -1,28 +1,30 @@
 require("dotenv").config();
 const express = require("express");
-const authRoutes = require("./routes/auth");
-const authMiddleware = require("./middleware/auth");
 
+const authRoutes = require("./routes/auth");
 const checkoutRoutes = require("./routes/checkout");
 const clickRoutes = require("./routes/click");
+const authMiddleware = require("./middleware/auth");
 
 const app = express();
 
 app.use(express.json());
 
-// ini tuh untuk route testing
+// Route testing
 app.get("/", (req, res) => {
   res.json({ message: "TokoKita backend up & running ✅" });
 });
 
-// kalau ini untuk AUTH route
+// AUTH routes
 app.use("/auth", authRoutes);
 
 // E-COMMERCE routes
 app.use("/api/checkout", checkoutRoutes);
-app.use("/click", clickRoutes);
 
-// route yang butuh JWT
+// Semua endpoint click wajib pakai JWT
+app.use("/api/click", authMiddleware, clickRoutes);
+
+// Route yang butuh JWT untuk lihat profil user
 app.get("/me", authMiddleware, (req, res) => {
   res.json({
     message: "Profil user dari token",
