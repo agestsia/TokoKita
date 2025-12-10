@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require("express");
+const cors = require("cors");
 
 const authRoutes = require("./routes/auth");
 const checkoutRoutes = require("./routes/checkout");
@@ -8,23 +9,24 @@ const authMiddleware = require("./middleware/auth");
 
 const app = express();
 
+// --- CORS: izinkan akses dari frontend React ---
+app.use(
+  cors({
+    origin: "http://localhost:5173", // alamat frontend-mu
+  })
+);
+// -----------------------------------------------
+
 app.use(express.json());
 
-// Route testing
 app.get("/", (req, res) => {
   res.json({ message: "TokoKita backend up & running ✅" });
 });
 
-// AUTH routes
 app.use("/auth", authRoutes);
-
-// E-COMMERCE routes
 app.use("/api/checkout", checkoutRoutes);
-
-// Semua endpoint click wajib pakai JWT
 app.use("/api/click", authMiddleware, clickRoutes);
 
-// Route yang butuh JWT untuk lihat profil user
 app.get("/me", authMiddleware, (req, res) => {
   res.json({
     message: "Profil user dari token",
@@ -33,7 +35,6 @@ app.get("/me", authMiddleware, (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-
 app.listen(PORT, () => {
   console.log(`Server berjalan di port ${PORT}`);
 });
