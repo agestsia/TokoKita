@@ -84,7 +84,7 @@ GET http://localhost:3000/
 Response:
 
 ```json
-{ "message": "TokoKita backend up & running ✅" }
+{ "message": "TokoKita backend up & running" }
 ```
 
 ---
